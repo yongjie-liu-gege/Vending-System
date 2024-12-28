@@ -1,0 +1,347 @@
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #00b894;
+    --bg-color: #f8f9fa;
+    --menu-bg: #2c3e50;
+    --menu-text: #ecf0f1;
+    --header-height: 50px;
+    --menu-width: 220px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+}
+
+/* 顶部导航样式 */
+.top-header {
+    height: var(--header-height);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-icons {
+    display: flex;
+    gap: 15px;
+}
+
+/* 左侧菜单样式 */
+.side-menu {
+    width: var(--menu-width);
+    background-color: var(--menu-bg);
+    color: var(--menu-text);
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    height: calc(100vh - var(--header-height));
+    border-right: 1px solid #e0e0e0;
+}
+
+.menu-header {
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.menu-list {
+    list-style: none;
+}
+
+.menu-list li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: var(--menu-text);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.menu-list li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 主要内容区域样式 */
+.main-container {
+    margin-top: var(--header-height);
+    margin-left: var(--menu-width);
+    padding: 20px;
+}
+
+.page-header {
+    margin-bottom: 20px;
+}
+
+/* 统计卡片样式 */
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 图表区域样式 */
+.charts-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.chart-tabs {
+    margin-bottom: 15px;
+}
+
+.tab-btn {
+    padding: 6px 15px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    background: #e3f2fd;
+    color: var(--primary-color);
+    border-radius: 4px;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.chart-item {
+    height: 300px;
+}
+
+/* 详细图表样式 */
+.detail-charts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.chart-box {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    height: 300px;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+    .stats-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .detail-charts {
+        grid-template-columns: 1fr;
+    }
+} 
+
+/* 添加子菜单样式 */
+.menu-item {
+    position: relative;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.arrow-icon {
+    margin-left: auto;
+    width: 16px;
+    height: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-size: contain;
+    transition: transform 0.3s;
+}
+
+.has-submenu.active .arrow-icon {
+    transform: rotate(180deg);
+}
+
+.submenu {
+    display: none;
+    list-style: none;
+    background-color: #f8f9fa;
+    padding-left: 20px;
+}
+
+.has-submenu.active .submenu {
+    display: block;
+}
+
+.submenu li a {
+    display: block;
+    padding: 8px 15px;
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.submenu li a:hover {
+    background-color: #e9ecef;
+    color: #333;
+}
+
+/* 修改菜单项样式 */
+.menu-item.has-submenu > .menu-link {
+    background-color: #e3f2fd;
+}
+
+.menu-item.has-submenu.active > .menu-link {
+    background-color: #bbdefb;
+}
+
+/* 添加下拉菜单动画和样式 */
+details {
+    transition: height 0.3s ease;
+}
+
+details[open] {
+    animation: slideDown 0.3s ease-in-out;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 主菜单项样式 */
+summary {
+    font-size: 16px;
+    padding: 12px 15px;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+/* 子菜单项样式 */
+details ul {
+    padding-left: 25px;
+    background-color: rgba(0, 0, 0, 0.2);
+    margin-top: 2px;
+}
+
+details ul li a {
+    font-size: 13px;
+    padding: 10px 15px 10px 45px;
+    display: block;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+details ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* 图标样式 */
+.menu-list i {
+    width: 20px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+details ul li a i {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* 选中状态 */
+.menu-list li.active > a,
+details[open] > summary {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+summary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+} 
+
+/* 添加视频容器样式 */
+.video-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.video-container video {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    border-radius: 4px;
+    background: #000;
+}
+
+/* 添加返回按钮样式 */
+.back-button {
+    margin-bottom: 10px;
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.back-button:hover {
+    background-color: var(--secondary-color);
+} 
