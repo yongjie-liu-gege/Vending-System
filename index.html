@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Vending Anywhere</title>
-    <link rel="stylesheet" href="/vending-system/styles.css">
+    <link rel="stylesheet" href="./styles.css">
     <!-- 引入 ECharts -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -74,7 +74,7 @@
             <div id="videoSection" style="display: none;">
                 <div class="video-container">
                     <video id="localVideo" controls width="100%">
-                        <source src="/vending-system/videos/1.mp4" type="video/mp4">
+                        <source src="./videos/1.mp4" type="video/mp4">
                         您的浏览器不支持 HTML5 视频播放
                     </video>
                 </div>
@@ -297,8 +297,7 @@
                     // 获取视频元素并播放
                     const video = document.getElementById('localVideo');
                     if (video) {
-                        // 修改这里的视频源路径
-                        video.src = '/vending-system/videos/1.mp4';  // 使用相对路径
+                        video.src = './videos/1.mp4';  // 使用本地相对路径
                         
                         // 尝试播放视频
                         video.load();
