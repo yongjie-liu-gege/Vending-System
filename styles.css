@@ -503,4 +503,352 @@ summary i {
 .photo-section {
     position: relative;
     z-index: 2;
+}
+
+/* AI 对话按钮样式 */
+.ai-chat-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+}
+
+.chat-trigger {
+    background: rgba(0, 195, 255, 0.2);
+    border: 1px solid rgba(0, 195, 255, 0.4);
+    color: #00ffff;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.chat-trigger:hover {
+    background: rgba(0, 195, 255, 0.3);
+    box-shadow: 0 0 15px rgba(0, 195, 255, 0.4);
+}
+
+/* 对话框样式 */
+.chat-modal {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background: linear-gradient(135deg, #1a1a1a, #2c3e50);
+    border: 1px solid rgba(0, 195, 255, 0.3);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 195, 255, 0.2);
+    z-index: 1000;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chat-header {
+    padding: 15px;
+    border-bottom: 1px solid rgba(0, 195, 255, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h3 {
+    color: #00ffff;
+    margin: 0;
+}
+
+.close-chat {
+    background: none;
+    border: none;
+    color: #00ffff;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message {
+    max-width: 80%;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 5px 0;
+}
+
+.user-message {
+    background: rgba(0, 195, 255, 0.1);
+    color: white;
+    align-self: flex-end;
+}
+
+.ai-message {
+    background: rgba(255, 255, 255, 0.1);
+    color: #00ffff;
+    align-self: flex-start;
+}
+
+.chat-input {
+    padding: 15px;
+    border-top: 1px solid rgba(0, 195, 255, 0.3);
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input textarea {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 195, 255, 0.3);
+    border-radius: 5px;
+    color: white;
+    padding: 8px;
+    resize: none;
+}
+
+.send-message {
+    background: rgba(0, 195, 255, 0.2);
+    border: 1px solid rgba(0, 195, 255, 0.4);
+    color: #00ffff;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.send-message:hover {
+    background: rgba(0, 195, 255, 0.3);
+} 
+
+/* 添加加载状态动画 */
+@keyframes thinking {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+.ai-message:last-child {
+    animation: thinking 1.5s infinite;
+} 
+
+/* 计算设置页面样式 */
+.calculation-settings {
+    padding: 20px;
+    background: linear-gradient(135deg, #1a1a1a, #2c3e50);
+    border-radius: 10px;
+    color: #fff;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.create-btn {
+    background: rgba(0, 195, 255, 0.2);
+    border: 1px solid rgba(0, 195, 255, 0.4);
+    color: #00ffff;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.create-btn:hover {
+    background: rgba(0, 195, 255, 0.3);
+    box-shadow: 0 0 15px rgba(0, 195, 255, 0.4);
+}
+
+.customer-types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.customer-type-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 195, 255, 0.3);
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 195, 255, 0.3);
+    padding-bottom: 10px;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.card-actions button {
+    background: none;
+    border: none;
+    color: #00ffff;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.card-actions button:hover {
+    color: #fff;
+}
+
+.create-form-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.create-form {
+    background: linear-gradient(135deg, #1a1a1a, #2c3e50);
+    border: 1px solid rgba(0, 195, 255, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    width: 400px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #00ffff;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 195, 255, 0.3);
+    border-radius: 4px;
+    color: #fff;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.form-buttons button {
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.save-btn {
+    background: rgba(0, 195, 255, 0.2);
+    border: 1px solid rgba(0, 195, 255, 0.4);
+    color: #00ffff;
+}
+
+.cancel-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+} 
+
+/* 添加公式显示样式 */
+.formula {
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 5px;
+    color: #00ffff;
+}
+
+.card-content p {
+    margin: 8px 0;
+} 
+
+/* 新建计算页面样式 */
+.calculation-form {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 195, 255, 0.3);
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.calculation-form .form-group {
+    margin-bottom: 20px;
+}
+
+.calculation-form select,
+.calculation-form input {
+    width: 100%;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 195, 255, 0.3);
+    border-radius: 4px;
+    color: #fff;
+    margin-top: 5px;
+}
+
+.calculation-form select {
+    cursor: pointer;
+}
+
+.calculate-btn {
+    background: rgba(0, 195, 255, 0.2);
+    border: 1px solid rgba(0, 195, 255, 0.4);
+    color: #00ffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calculate-btn:hover {
+    background: rgba(0, 195, 255, 0.3);
+    box-shadow: 0 0 15px rgba(0, 195, 255, 0.4);
+}
+
+.calculation-result {
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 195, 255, 0.3);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.result-content {
+    margin-top: 15px;
+}
+
+.result-content p {
+    margin: 10px 0;
 } 

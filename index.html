@@ -4,10 +4,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Vending Anywhere</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./styles.css">
     <!-- 引入 ECharts -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+    <style>
+        #map {
+            height: 700px;
+            width: 100%;
+            margin-top: 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .map-container {
+            padding: 10px;
+            padding-bottom: 40px;
+            background: #fff;
+            border-radius: 8px;
+            margin: 10px 0;
+            height: calc(100vh - 180px);
+        }
+        .map-controls {
+            margin-bottom: 10px;
+            position: absolute;
+            top: 70px;
+            left: 40px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .map-controls button {
+            margin-right: 10px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        .map-controls button:hover {
+            background: #45a049;
+        }
+        .file-input {
+            display: none;
+        }
+        .import-btn {
+            background: #2196F3;
+            margin-right: 10px;
+        }
+        .import-btn:hover {
+            background: #1976D2;
+        }
+        .meter-popup {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .import-progress {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            min-width: 300px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .import-status {
+            margin-top: 10px;
+            color: #666;
+        }
+        .import-error {
+            color: #f44336;
+            margin-top: 5px;
+        }
+        .close-progress {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+            color: #666;
+        }
+        .dcu-btn {
+            background: #2962FF;
+        }
+        .dcu-btn:hover {
+            background: #1565C0;
+        }
+        .device-counter {
+            position: absolute;
+            top: 70px;
+            right: 40px;
+            z-index: 1000;
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .device-counter p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .device-counter .meter-count {
+            color: #f44336;
+        }
+        .device-counter .dcu-count {
+            color: #2962FF;
+        }
+        .device-counter i {
+            margin-right: 5px;
+            width: 20px;
+        }
+        .clear-btn {
+            margin-right: 10px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .meter-clear {
+            background: #d32f2f;
+        }
+        .meter-clear:hover {
+            background: #b71c1c;
+        }
+        .dcu-clear {
+            background: #1565C0;
+        }
+        .dcu-clear:hover {
+            background: #0D47A1;
+        }
+    </style>
 </head>
 <body>
     <!-- 顶部导航栏 -->
@@ -176,6 +328,30 @@
                         </ul>
                     </details>
                 </li>
+                <li>
+                    <details>
+                        <summary>
+                            <i class="fas fa-calculator"></i>
+                            费率计算
+                        </summary>
+                        <ul class="submenu-list">
+                            <li><a href="#" class="submenu-link"><i class="fas fa-plus"></i> 新建计算</a></li>
+                            <li><a href="#" class="submenu-link"><i class="fas fa-history"></i> 计算记录</a></li>
+                            <li><a href="#" class="submenu-link"><i class="fas fa-cog"></i> 计算设置</a></li>
+                        </ul>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary>
+                            <i class="fas fa-map"></i>
+                            地图
+                        </summary>
+                        <ul class="submenu-list">
+                            <li><a href="#" class="submenu-link">地图</a></li>
+                        </ul>
+                    </details>
+                </li>
             </ul>
         </nav>
 
@@ -185,7 +361,7 @@
             <div id="videoSection" style="display: none;">
                 <div class="video-container">
                     <video id="localVideo" controls width="100%">
-                        <source src="videos/1.mov" type="video/quicktime">
+                        <source src="./videos/1.mov" type="video/quicktime">
                         您的浏览器不支持 HTML5 视频播放
                     </video>
                 </div>
@@ -199,6 +375,11 @@
                 
                 <!-- 培训开会板块 -->
                 <div class="photo-section">
+                    <div class="ai-chat-button">
+                        <button class="chat-trigger">
+                            <i class="fas fa-robot"></i> AI 助手
+                        </button>
+                    </div>
                     <h3>培训开会</h3>
                     <div class="photo-slider-container">
                         <button class="slider-arrow prev-arrow">
@@ -207,19 +388,19 @@
                         <div class="photo-grid">
                             <div class="photo-slider">
                                 <div class="photo-item">
-                                    <img src="images/1.jpeg" alt="培训开会照片1" loading="lazy">
+                                    <img src="./images/1.jpeg" alt="培训开会照片1" loading="lazy">
                                 </div>
                                 <div class="photo-item">
-                                    <img src="images/5.jpeg" alt="培训开会照片5" loading="lazy">
+                                    <img src="./images/5.jpeg" alt="培训开会照片5" loading="lazy">
                                 </div>
                                 <div class="photo-item">
-                                    <img src="images/6.jpeg" alt="培训开会照片6" loading="lazy">
+                                    <img src="./images/6.jpeg" alt="培训开会照片6" loading="lazy">
                                 </div>
                                 <div class="photo-item">
-                                    <img src="images/8.jpeg" alt="培训开会照片8" loading="lazy">
+                                    <img src="./images/8.jpeg" alt="培训开会照片8" loading="lazy">
                                 </div>
                                 <div class="photo-item">
-                                    <img src="images/9.jpeg" alt="培训开会照片9" loading="lazy">
+                                    <img src="./images/9.jpeg" alt="培训开会照片9" loading="lazy">
                                 </div>
                             </div>
                         </div>
@@ -239,19 +420,19 @@
                         <div class="photo-grid">
                             <div class="photo-slider">
                                 <div class="photo-item">
-                                    <img src="images/2.jpeg" alt="设备安装照片2" loading="lazy">
+                                    <img src="./images/2.jpeg" alt="设备安装照片2" loading="lazy">
                                 </div>
                                 <div class="photo-item">
-                                    <img src="images/10.jpeg" alt="设备安装照片10" loading="lazy">
+                                    <img src="./images/10.jpeg" alt="设备安装照片10" loading="lazy">
                                 </div>
                                 <div class="photo-item">
-                                    <img src="images/11.jpeg" alt="设备安装照片11" loading="lazy">
+                                    <img src="./images/11.jpeg" alt="设备安装照片11" loading="lazy">
                                 </div>
                                 <div class="photo-item">
-                                    <img src="images/12.jpeg" alt="设备安装照片12" loading="lazy">
+                                    <img src="./images/12.jpeg" alt="设备安装照片12" loading="lazy">
                                 </div>
                                 <div class="photo-item">
-                                    <img src="images/13.jpeg" alt="设备安装照片13" loading="lazy">
+                                    <img src="./images/13.jpeg" alt="设备安装照片13" loading="lazy">
                                 </div>
                             </div>
                         </div>
@@ -269,6 +450,30 @@
         <span class="modal-close">&times;</span>
         <img class="modal-content" id="modalImage">
     </div>
+
+    <!-- 在 body 结束标签前添加对话框 -->
+    <div class="chat-modal">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h3>AI 助手</h3>
+                <button class="close-chat">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-messages">
+                <!-- 消息会在这里动态添加 -->
+            </div>
+            <div class="chat-input">
+                <textarea placeholder="输入您的问题..." rows="1"></textarea>
+                <button class="send-message">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加 JWT 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.9.0/jsrsasign-all-min.js"></script>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -289,28 +494,113 @@
                 this.classList.add('active');
                 currentActive = this;
 
-                // 显示视频部分
-                const videoSection = document.getElementById('videoSection');
-                const dataOverview = document.getElementById('dataOverview');
+                const menuText = this.textContent.trim();
                 
-                if (videoSection && dataOverview) {
-                    videoSection.style.display = 'block';
-                    dataOverview.style.display = 'none';
+                // 根据菜单项显示不同内容
+                if (menuText === '地图') {
+                    // 显示地图
+                    showMap();
+                } else if (menuText === '计算设置' || menuText === '新建计算' || menuText === '计算记录') {
+                    // 隐藏视频和照片部分
+                    const videoSection = document.getElementById('videoSection');
+                    const dataOverview = document.getElementById('dataOverview');
+                    if (videoSection) videoSection.style.display = 'none';
+                    if (dataOverview) dataOverview.style.display = 'none';
                     
-                    // 获取视频元素并播放
-                    const video = document.getElementById('localVideo');
-                    if (video) {
-                        video.src = 'videos/1.mov';
-                        video.load();
-                        video.play().catch(function(error) {
-                            console.log("视频自动播放失败:", error);
-                        });
+                    // 移除现有的计算设置页面（如果存在）
+                    const existingSettings = document.getElementById('calculationSettings');
+                    if (existingSettings) {
+                        existingSettings.remove();
                     }
+                    
+                    // 根据不同的菜单项显示不同内容
+                    if (menuText === '计算设置') {
+                        showCalculationSettings();
+                    } else if (menuText === '新建计算') {
+                        // 显示新建计算页面
+                        const content = document.querySelector('.content');
+                        content.insertAdjacentHTML('beforeend', `
+                            <div id="calculationSettings" class="calculation-settings">
+                                <div class="settings-header">
+                                    <h3>新建计算</h3>
+                                </div>
+                                <div class="calculation-form">
+                                    <div class="form-group">
+                                        <label for="calc-tariff">Tariff:</label>
+                                        <select id="calc-tariff" name="tariff" required>
+                                            <option value="">选择 Tariff</option>
+                                            ${loadTariffOptions()}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calc-montant">Montant:</label>
+                                        <input type="number" id="calc-montant" name="montant" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="calc-mois">N Mois sans achats:</label>
+                                        <input type="number" id="calc-mois" name="mois" required readonly>
+                                    </div>
+                                    <div class="form-buttons">
+                                        <button class="calculate-btn">
+                                            <i class="fas fa-calculator"></i> 计算
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="calculation-result" class="calculation-result" style="display: none;">
+                                    <!-- 计算结果将在这里显示 -->
+                                </div>
+                            </div>
+                        `);
+
+                        // 立即为 Tariff 选择添加事件监听
+                        const calcTariff = document.getElementById('calc-tariff');
+                        calcTariff.addEventListener('change', function() {
+                            const selectedTariff = this.value;
+                            const savedTypes = JSON.parse(localStorage.getItem('customerTypes'));
+                            const selectedType = savedTypes.find(type => type.puissance === selectedTariff);
+                            
+                            if (selectedType) {
+                                const moisInput = document.getElementById('calc-mois');
+                                moisInput.value = selectedType.nMois;
+                            }
+                        });
+
+                        // 添加计算按钮事件
+                        const calculateBtn = document.querySelector('.calculate-btn');
+                        calculateBtn.addEventListener('click', performCalculation);
+                    } else if (menuText === '计算记录') {
+                        // 显示空白的计算记录页面
+                        const content = document.querySelector('.content');
+                        content.insertAdjacentHTML('beforeend', `
+                            <div id="calculationSettings" class="calculation-settings">
+                                <div class="settings-header">
+                                    <h3>计算记录</h3>
+                                </div>
+                                <!-- 计算记录的内容将在这里添加 -->
+                            </div>
+                        `);
+                    }
+                } else {
+                    // 对于其他所有菜单项，显示视频
+                    const videoSection = document.getElementById('videoSection');
+                    const dataOverview = document.getElementById('dataOverview');
+                    if (videoSection) {
+                        videoSection.style.display = 'block';
+                        // 确保视频重新加载并播放
+                        const video = document.getElementById('localVideo');
+                        if (video) {
+                            video.src = './videos/1.mov';
+                            video.load();
+                            video.play().catch(function(error) {
+                                console.log("视频自动播放失败:", error);
+                            });
+                        }
+                    }
+                    if (dataOverview) dataOverview.style.display = 'none';
                 }
 
                 // 更新页面标题
-                const menuName = this.textContent.trim();
-                document.querySelector('.page-header h2').textContent = menuName;
+                document.querySelector('.page-header h2').textContent = menuText;
             });
         });
 
@@ -412,6 +702,1414 @@
                 modal.style.display = 'none';
             }
         });
+
+        // AI 对话框功能
+        const chatTriggers = document.querySelectorAll('.chat-trigger');
+        const chatModal = document.querySelector('.chat-modal');
+        const closeChat = document.querySelector('.close-chat');
+        const sendMessage = document.querySelector('.send-message');
+        const chatInput = document.querySelector('.chat-input textarea');
+        const chatMessages = document.querySelector('.chat-messages');
+
+        // 打开对话框
+        chatTriggers.forEach(trigger => {
+            trigger.addEventListener('click', () => {
+                chatModal.style.display = 'block';
+            });
+        });
+
+        // 关闭对话框
+        closeChat.addEventListener('click', () => {
+            chatModal.style.display = 'none';
+        });
+
+        // 发送消息
+        function addMessage(text, isUser = true) {
+            const message = document.createElement('div');
+            message.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+            message.textContent = text;
+            chatMessages.appendChild(message);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 智谱AI API 配置
+        const API_KEY = '33640fd0b5a4e56e284eea57135ad8bc.HdMprwoatBeupgJi';
+        const API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+
+        // 生成 JWT Token
+        function generateToken(apiKey) {
+            try {
+                const [id, secret] = apiKey.split('.');
+                const header = {
+                    alg: 'HS256',
+                    sign_type: 'SIGN'
+                };
+                
+                const now = Date.now();
+                const payload = {
+                    api_key: id,
+                    exp: now + 3600000, // 1小时后过期
+                    timestamp: now
+                };
+
+                const token = KJUR.jws.JWS.sign(
+                    'HS256',
+                    JSON.stringify(header),
+                    JSON.stringify(payload),
+                    secret
+                );
+
+                return token;
+            } catch (error) {
+                console.error('Token generation error:', error);
+                return null;
+            }
+        }
+
+        // 调用智谱AI API
+        async function callZhipuAI(userMessage) {
+            try {
+                console.log('Generating token...'); // 添加日志
+                const token = generateToken(API_KEY);
+                if (!token) {
+                    throw new Error('Failed to generate token');
+                }
+                console.log('Token generated successfully'); // 添加日志
+
+                console.log('Making API request...'); // 添加日志
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        model: 'glm-4',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: '你是一个专业的AI助手，负责回答用户关于刚果布现场实施的问题。'
+                            },
+                            {
+                                role: 'user',
+                                content: userMessage
+                            }
+                        ]
+                    })
+                });
+
+                console.log('Response status:', response.status); // 添加状态码日志
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('API Error:', errorData); // 添加错误日志
+                    throw new Error(`API Error: ${errorData.error?.message || response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('API response received:', data); // 添加响应数据日志
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error('Detailed error:', error); // 添加详细错误日志
+                return '抱歉，我遇到了一些问题，请稍后再试。';
+            }
+        }
+
+        // 更新发送消息的处理逻辑
+        sendMessage.addEventListener('click', async () => {
+            const text = chatInput.value.trim();
+            if (text) {
+                // 显示用户消息
+                addMessage(text, true);
+                chatInput.value = '';
+                
+                // 显示加载状态
+                const loadingMessage = document.createElement('div');
+                loadingMessage.className = 'message ai-message';
+                loadingMessage.textContent = '正在思考...';
+                chatMessages.appendChild(loadingMessage);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                try {
+                    // 调用智谱AI API
+                    const response = await callZhipuAI(text);
+                    
+                    // 移除加载消息
+                    chatMessages.removeChild(loadingMessage);
+                    
+                    // 显示 AI 回复
+                    addMessage(response, false);
+                } catch (error) {
+                    // 移除加载消息
+                    chatMessages.removeChild(loadingMessage);
+                    
+                    // 显示错误消息
+                    addMessage('抱歉，发生了一些错误。请稍后再试。', false);
+                    console.error('Error:', error);
+                }
+            }
+        });
+
+        // 按 Enter 发送消息
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage.click();
+            }
+        });
+
+        // 添加数据持久化相关函数
+        function saveCustomerTypes() {
+            const cards = document.querySelectorAll('.customer-type-card');
+            const customerTypes = Array.from(cards).map(card => {
+                const content = card.querySelector('.card-content');
+                const data = {
+                    puissance: content.querySelector('p:nth-child(1)').textContent.split(':')[1].trim(),
+                    dc: content.querySelector('p:nth-child(2)').textContent.split(':')[1].trim(),
+                    rav: content.querySelector('p:nth-child(3)').textContent.split(':')[1].trim(),
+                    tm: content.querySelector('p:nth-child(4)').textContent.split(':')[1].trim(),
+                    nMois: content.querySelector('p:nth-child(5)').textContent.split(':')[1].trim(),
+                    moisInitial: content.querySelector('p:nth-child(6)').textContent.split(':')[1].trim() || '0',
+                    prixUnitaire: content.querySelector('p:nth-child(7)').textContent.split(':')[1].trim(),
+                    totalMontant: parseFloat(content.querySelector('p:nth-child(8)').textContent.split(':')[1].trim()),
+                    totalkWh: parseFloat(content.querySelector('p:nth-child(9)').textContent.split(':')[1].trim()),
+                    numbreAchat: parseInt(content.querySelector('p:nth-child(10)').textContent.split(':')[1].trim()) || 0,
+                    tarifProgressif: content.querySelector('p:nth-child(11)').textContent.split(':')[1].trim() === 'true',
+                    prixUnitaireSup: null,
+                    deuxiemeDC: null,
+                    reference: null
+                };
+                
+                // 如果是渐进式费率，获取额外字段
+                if (data.tarifProgressif) {
+                    data.prixUnitaireSup = content.querySelector('p:nth-child(12)').textContent.split(':')[1].trim();
+                    data.deuxiemeDC = content.querySelector('p:nth-child(13)').textContent.split(':')[1].trim();
+                    data.reference = content.querySelector('p:nth-child(14)').textContent.split(':')[1].trim();
+                    
+                    // 重新计算 reference 值以确保一致性
+                    const prixUnitaireSup = parseFloat(data.prixUnitaireSup);
+                    const deuxiemeDC = parseFloat(data.deuxiemeDC);
+                    const dc = parseFloat(data.dc);
+                    const rav = parseFloat(data.rav);
+                    const moisInitial = parseFloat(data.moisInitial);
+                    data.reference = (1.189 * (900 * prixUnitaireSup + dc * (moisInitial - 1) + deuxiemeDC) + rav * moisInitial + 50).toFixed(2);
+                }
+                
+                return data;
+            });
+            localStorage.setItem('customerTypes', JSON.stringify(customerTypes));
+        }
+
+        function loadCustomerTypes() {
+            const savedTypes = localStorage.getItem('customerTypes');
+            if (savedTypes) {
+                const customerTypes = JSON.parse(savedTypes);
+                customerTypes.forEach(data => {
+                    createCustomerTypeCard(data, false); // false 表示不需要保存到 localStorage
+                });
+            }
+        }
+
+        // 修改 showCalculationSettings 函数
+        function showCalculationSettings() {
+            // 创建计算设置内容
+            const settingsContent = `
+                <div id="calculationSettings" class="calculation-settings">
+                    <div class="settings-header">
+                        <h3>客户类型设置</h3>
+                        <button class="create-btn">
+                            <i class="fas fa-plus"></i> 创建新类型
+                        </button>
+                    </div>
+                    <div class="customer-types-grid">
+                        <!-- 客户类型列表将在这里动态显示 -->
+                    </div>
+                </div>
+            `;
+
+            // 将内容添加到主内容区域
+            const content = document.querySelector('.content');
+            const existingSettings = document.getElementById('calculationSettings');
+            if (existingSettings) {
+                existingSettings.remove();
+            }
+            content.insertAdjacentHTML('beforeend', settingsContent);
+
+            // 加载保存的客户类型数据
+            loadCustomerTypes();
+
+            // 添加创建按钮点击事件
+            const createBtn = document.querySelector('.create-btn');
+            createBtn.addEventListener('click', showCreateForm);
+        }
+
+        // 修改 createCustomerTypeCard 函数
+        function createCustomerTypeCard(data, shouldSave = true) {
+            // 确保 moisInitial 有默认值
+            data.moisInitial = data.moisInitial || '0';
+            
+            // 确保 tarifProgressif 是布尔值
+            data.tarifProgressif = data.tarifProgressif === true || data.tarifProgressif === 'true';
+            
+            // 如果是渐进式费率，确保相关字段存在
+            if (data.tarifProgressif) {
+                data.prixUnitaireSup = data.prixUnitaireSup || '0';
+                data.deuxiemeDC = data.deuxiemeDC || '0';
+            }
+
+            const card = document.createElement('div');
+            card.className = 'customer-type-card';
+            
+            // 初始化或转换数据
+            data.totalMontant = parseFloat(data.totalMontant) || 0;
+            data.totalkWh = parseFloat(data.totalkWh) || 0;
+            
+            // 如果 totalMontant 大于 0，强制设置 nMois 为 0
+            if (data.totalMontant > 0) {
+                data.nMois = "0";
+            }
+
+            // 修改计算公式
+            const calculFormula = `Montantpay = 1,189 x (quantiteEnergie x ${data.prixUnitaire} + ${data.dc} x ${data.nMois}) + ${data.rav} x ${data.nMois} + ${data.tm}`;
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <h4>Tariff ${data.puissance}</h4>
+                    <div class="card-actions">
+                        <button class="edit-btn" title="编辑"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn" title="删除"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p><strong>Puissance:</strong> ${data.puissance}</p>
+                    <p><strong>DC:</strong> ${data.dc}</p>
+                    <p><strong>RAV:</strong> ${data.rav}</p>
+                    <p><strong>TM:</strong> ${data.tm}</p>
+                    <p><strong>N Mois pas payer:</strong> ${data.nMois}</p>
+                    <p><strong>Mois initial:</strong> ${data.moisInitial}</p>
+                    <p><strong>Prix Unitaire:</strong> ${data.prixUnitaire}</p>
+                    <p><strong>Total Montant:</strong> <span style="color: #ff0000;">${data.totalMontant.toFixed(2)}</span></p>
+                    <p><strong>Total kWh:</strong> <span style="color: #ff0000;">${data.totalkWh.toFixed(2)}</span></p>
+                    <p><strong>Numbre Achat:</strong> <span style="color: #0000ff;">${data.numbreAchat || 0}</span></p>
+                    <p><strong>Tarif progressif:</strong> ${data.tarifProgressif}</p>
+                    ${data.tarifProgressif ? `
+                        <p><strong>Prix Unitaire Supplementaire:</strong> ${data.prixUnitaireSup}</p>
+                        <p><strong>Deuxieme DC:</strong> ${data.deuxiemeDC}</p>
+                        <p><strong>Reference:</strong> <span style="color: #008000;">${data.reference}</span></p>
+                    ` : ''}
+                    <p><strong>Calcul fonction:</strong></p>
+                    <p class="formula">${calculFormula}</p>
+                </div>
+            `;
+
+            // 添加编辑按钮事件
+            const editBtn = card.querySelector('.edit-btn');
+            editBtn.addEventListener('click', () => {
+                showEditForm(data, card);
+            });
+
+            // 添加删除按钮事件
+            const deleteBtn = card.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', () => {
+                if (confirm('确定要删除这个客户类型吗？')) {
+                    card.remove();
+                    updateCardNumbers();
+                    saveCustomerTypes(); // 删除后保存更新
+                }
+            });
+
+            const grid = document.querySelector('.customer-types-grid');
+            grid.appendChild(card);
+
+            if (shouldSave) {
+                saveCustomerTypes();
+            }
+        }
+
+        // 修改 showEditForm 函数
+        function showEditForm(data, card) {
+            const form = document.createElement('div');
+            form.className = 'create-form-modal';
+            form.innerHTML = `
+                <div class="create-form">
+                    <h3>编辑客户类型</h3>
+                    <div class="form-group">
+                        <label for="edit-puissance">Puissance:</label>
+                        <input type="number" id="edit-puissance" name="puissance" value="${data.puissance}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-dc">DC:</label>
+                        <input type="number" id="edit-dc" name="dc" value="${data.dc}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-rav">RAV:</label>
+                        <input type="number" id="edit-rav" name="rav" value="${data.rav}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-tm">TM:</label>
+                        <input type="number" id="edit-tm" name="tm" value="${data.tm}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-nMois">N Mois pas payer:</label>
+                        <input type="number" id="edit-nMois" name="nMois" value="${data.nMois}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-moisInitial">Mois initial:</label>
+                        <input type="number" id="edit-moisInitial" name="moisInitial" value="${data.moisInitial}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-prixUnitaire">Prix Unitaire:</label>
+                        <input type="number" id="edit-prixUnitaire" name="prixUnitaire" value="${data.prixUnitaire}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-tarifProgressif">Tarif progressif:</label>
+                        <select id="edit-tarifProgressif" name="tarifProgressif">
+                            <option value="false" ${!data.tarifProgressif ? 'selected' : ''}>False</option>
+                            <option value="true" ${data.tarifProgressif ? 'selected' : ''}>True</option>
+                        </select>
+                    </div>
+                    <div class="form-group prix-unitaire-sup" style="display: ${data.tarifProgressif ? 'block' : 'none'}">
+                        <label for="edit-prixUnitaireSup">Prix Unitaire Supplementaire:</label>
+                        <input type="number" id="edit-prixUnitaireSup" name="prixUnitaireSup" value="${data.prixUnitaireSup || ''}" ${data.tarifProgressif ? 'required' : ''}>
+                    </div>
+                    <div class="form-group deuxieme-dc" style="display: ${data.tarifProgressif ? 'block' : 'none'}">
+                        <label for="edit-deuxiemeDC">Deuxieme DC:</label>
+                        <input type="number" id="edit-deuxiemeDC" name="deuxiemeDC" value="${data.deuxiemeDC || ''}" ${data.tarifProgressif ? 'required' : ''}>
+                    </div>
+                    <div class="form-buttons">
+                        <button class="save-btn">保存</button>
+                        <button class="cancel-btn">取消</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(form);
+
+            // 添加 Tarif progressif 变化事件
+            const tarifProgressif = form.querySelector('#edit-tarifProgressif');
+            const prixUnitaireSupGroup = form.querySelector('.prix-unitaire-sup');
+            const deuxiemeDCGroup = form.querySelector('.deuxieme-dc');
+            
+            tarifProgressif.addEventListener('change', function() {
+                const isProgressive = this.value === 'true';
+                prixUnitaireSupGroup.style.display = isProgressive ? 'block' : 'none';
+                deuxiemeDCGroup.style.display = isProgressive ? 'block' : 'none';
+                
+                const prixUnitaireSupInput = document.getElementById('edit-prixUnitaireSup');
+                const deuxiemeDCInput = document.getElementById('edit-deuxiemeDC');
+                prixUnitaireSupInput.required = isProgressive;
+                deuxiemeDCInput.required = isProgressive;
+            });
+
+            // 修改保存按钮事件
+            const saveBtn = form.querySelector('.save-btn');
+            const cancelBtn = form.querySelector('.cancel-btn');
+
+            saveBtn.addEventListener('click', () => {
+                const nMoisValue = parseInt(document.getElementById('edit-nMois').value);
+                const tarifProgressifValue = document.getElementById('edit-tarifProgressif').value === 'true';
+                const updatedData = {
+                    puissance: document.getElementById('edit-puissance').value,
+                    dc: document.getElementById('edit-dc').value,
+                    rav: document.getElementById('edit-rav').value,
+                    tm: document.getElementById('edit-tm').value,
+                    nMois: nMoisValue,
+                    moisInitial: document.getElementById('edit-moisInitial').value || '0',
+                    prixUnitaire: document.getElementById('edit-prixUnitaire').value,
+                    totalMontant: nMoisValue > 0 ? 0 : data.totalMontant,
+                    totalkWh: nMoisValue > 0 ? 0 : data.totalkWh,
+                    numbreAchat: nMoisValue > 0 ? 0 : data.numbreAchat,
+                    tarifProgressif: tarifProgressifValue,
+                    prixUnitaireSup: tarifProgressifValue ? document.getElementById('edit-prixUnitaireSup').value || '0' : null,
+                    deuxiemeDC: tarifProgressifValue ? document.getElementById('edit-deuxiemeDC').value || '0' : null,
+                    reference: null
+                };
+
+                // 如果是渐进式费率，计算 reference 值
+                if (tarifProgressifValue) {
+                    const prixUnitaireSup = parseFloat(updatedData.prixUnitaireSup);
+                    const deuxiemeDC = parseFloat(updatedData.deuxiemeDC);
+                    const dc = parseFloat(updatedData.dc);
+                    const rav = parseFloat(updatedData.rav);
+                    const moisInitial = parseFloat(updatedData.moisInitial);
+                    updatedData.reference = (1.189 * (900 * prixUnitaireSup + dc * (moisInitial - 1) + deuxiemeDC) + rav * moisInitial + 50).toFixed(2);
+                }
+
+                // 更新卡片内容
+                updateCardContent(card, updatedData);
+
+                // 更新卡片的数据
+                Object.assign(data, updatedData);
+                
+                // 同步更新计算表单中的 N Mois sans achats
+                const calcTariff = document.getElementById('calc-tariff');
+                const calcMois = document.getElementById('calc-mois');
+                if (calcTariff && calcMois && calcTariff.value === updatedData.puissance) {
+                    calcMois.value = updatedData.nMois;
+                }
+                
+                form.remove();
+                saveCustomerTypes(); // 编辑后保存更新
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                form.remove();
+            });
+        }
+
+        // 添加更新卡片内容的辅助函数
+        function updateCardContent(card, data) {
+            // 计算 Reference（当 tarifProgressif 为 true 时）
+            let referenceValue = '';
+            if (data.tarifProgressif) {
+                const prixUnitaireSup = parseFloat(data.prixUnitaireSup);
+                const deuxiemeDC = parseFloat(data.deuxiemeDC);
+                const dc = parseFloat(data.dc);
+                const rav = parseFloat(data.rav);
+                const moisInitial = parseFloat(data.moisInitial);
+                referenceValue = (1.189 * (900 * prixUnitaireSup + dc * (moisInitial - 1) + deuxiemeDC) + rav * moisInitial + 50).toFixed(2);
+            }
+
+            const calculFormula = `Montantpay = 1,189 x (quantiteEnergie x ${data.prixUnitaire} + ${data.dc} x ${data.nMois}) + ${data.rav} x ${data.nMois} + ${data.tm}`;
+
+            const cardContent = card.querySelector('.card-content');
+            cardContent.innerHTML = `
+                <p><strong>Puissance:</strong> ${data.puissance}</p>
+                <p><strong>DC:</strong> ${data.dc}</p>
+                <p><strong>RAV:</strong> ${data.rav}</p>
+                <p><strong>TM:</strong> ${data.tm}</p>
+                <p><strong>N Mois pas payer:</strong> ${data.nMois}</p>
+                <p><strong>Mois initial:</strong> ${data.moisInitial}</p>
+                <p><strong>Prix Unitaire:</strong> ${data.prixUnitaire}</p>
+                <p><strong>Total Montant:</strong> <span style="color: #ff0000;">${parseFloat(data.totalMontant).toFixed(2)}</span></p>
+                <p><strong>Total kWh:</strong> <span style="color: #ff0000;">${parseFloat(data.totalkWh).toFixed(2)}</span></p>
+                <p><strong>Numbre Achat:</strong> <span style="color: #0000ff;">${data.numbreAchat || 0}</span></p>
+                <p><strong>Tarif progressif:</strong> ${data.tarifProgressif}</p>
+                ${data.tarifProgressif ? `
+                    <p><strong>Prix Unitaire Supplementaire:</strong> ${data.prixUnitaireSup}</p>
+                    <p><strong>Deuxieme DC:</strong> ${data.deuxiemeDC}</p>
+                    <p><strong>Reference:</strong> <span style="color: #008000;">${data.reference}</span></p>
+                ` : ''}
+                <p><strong>Calcul fonction:</strong></p>
+                <p class="formula">${calculFormula}</p>
+                ${data.tarifProgressif ? `
+                    <p class="formula">Reference = 1,189 × (900 × ${data.prixUnitaireSup} + ${data.dc} × (${data.moisInitial} - 1) + ${data.deuxiemeDC}) + ${data.rav} × ${data.moisInitial} + 50 = ${data.reference}</p>
+                ` : ''}
+            `;
+        }
+
+        // 添加更新卡片编号的函数
+        function updateCardNumbers() {
+            // 这个函数现在可以为空，因为我们不再需要按顺序编号
+            // 或者可以完全删除对这个函数的调用
+        }
+
+        // 添加创建表单显示函数
+        function showCreateForm() {
+            const form = document.createElement('div');
+            form.className = 'create-form-modal';
+            form.innerHTML = `
+                <div class="create-form">
+                    <h3>创建新客户类型</h3>
+                    <div class="form-group">
+                        <label for="puissance">Puissance:</label>
+                        <input type="number" id="puissance" name="puissance" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dc">DC:</label>
+                        <input type="number" id="dc" name="dc" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rav">RAV:</label>
+                        <input type="number" id="rav" name="rav" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tm">TM:</label>
+                        <input type="number" id="tm" name="tm" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nMois">N Mois pas payer:</label>
+                        <input type="number" id="nMois" name="nMois" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="moisInitial">Mois initial:</label>
+                        <input type="number" id="moisInitial" name="moisInitial" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prixUnitaire">Prix Unitaire:</label>
+                        <input type="number" id="prixUnitaire" name="prixUnitaire" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tarifProgressif">Tarif progressif:</label>
+                        <select id="tarifProgressif" name="tarifProgressif">
+                            <option value="false">False</option>
+                            <option value="true">True</option>
+                        </select>
+                    </div>
+                    <div class="form-group prix-unitaire-sup" style="display: none;">
+                        <label for="prixUnitaireSup">Prix Unitaire Supplementaire:</label>
+                        <input type="number" id="prixUnitaireSup" name="prixUnitaireSup">
+                    </div>
+                    <div class="form-group deuxieme-dc" style="display: none;">
+                        <label for="deuxiemeDC">Deuxieme DC:</label>
+                        <input type="number" id="deuxiemeDC" name="deuxiemeDC">
+                    </div>
+                    <div class="form-buttons">
+                        <button class="save-btn">保存</button>
+                        <button class="cancel-btn">取消</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(form);
+
+            // 修改 Tarif progressif 变化事件
+            const tarifProgressif = form.querySelector('#tarifProgressif');
+            const prixUnitaireSupGroup = form.querySelector('.prix-unitaire-sup');
+            const deuxiemeDCGroup = form.querySelector('.deuxieme-dc');
+            
+            tarifProgressif.addEventListener('change', function() {
+                const isProgressive = this.value === 'true';
+                prixUnitaireSupGroup.style.display = isProgressive ? 'block' : 'none';
+                deuxiemeDCGroup.style.display = isProgressive ? 'block' : 'none';
+                
+                const prixUnitaireSupInput = document.getElementById('prixUnitaireSup');
+                const deuxiemeDCInput = document.getElementById('deuxiemeDC');
+                prixUnitaireSupInput.required = isProgressive;
+                deuxiemeDCInput.required = isProgressive;
+            });
+
+            // 修改保存按钮事件
+            const saveBtn = form.querySelector('.save-btn');
+            const cancelBtn = form.querySelector('.cancel-btn');
+
+            saveBtn.addEventListener('click', () => {
+                const tarifProgressifValue = document.getElementById('tarifProgressif').value === 'true';
+                
+                // 获取表单数据
+                const data = {
+                    puissance: document.getElementById('puissance').value,
+                    dc: document.getElementById('dc').value,
+                    rav: document.getElementById('rav').value,
+                    tm: document.getElementById('tm').value,
+                    nMois: document.getElementById('nMois').value,
+                    moisInitial: document.getElementById('moisInitial').value || '0',
+                    prixUnitaire: document.getElementById('prixUnitaire').value,
+                    tarifProgressif: tarifProgressifValue,
+                    prixUnitaireSup: tarifProgressifValue ? document.getElementById('prixUnitaireSup').value || '0' : null,
+                    deuxiemeDC: tarifProgressifValue ? document.getElementById('deuxiemeDC').value || '0' : null,
+                    totalMontant: 0,
+                    totalkWh: 0,
+                    numbreAchat: 0,
+                    reference: null
+                };
+
+                // 如果是渐进式费率，计算 reference 值
+                if (tarifProgressifValue) {
+                    const prixUnitaireSup = parseFloat(data.prixUnitaireSup);
+                    const deuxiemeDC = parseFloat(data.deuxiemeDC);
+                    const dc = parseFloat(data.dc);
+                    const rav = parseFloat(data.rav);
+                    const moisInitial = parseFloat(data.moisInitial);
+                    data.reference = (1.189 * (900 * prixUnitaireSup + dc * (moisInitial - 1) + deuxiemeDC) + rav * moisInitial + 50).toFixed(2);
+                }
+
+                // 创建新的客户类型卡片
+                createCustomerTypeCard(data);
+                form.remove();
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                form.remove();
+            });
+        }
+
+        // 添加加载 Tariff 选项的函数
+        function loadTariffOptions() {
+            const savedTypes = localStorage.getItem('customerTypes');
+            if (!savedTypes) return '';
+            
+            const customerTypes = JSON.parse(savedTypes);
+            const options = customerTypes.map(type => 
+                `<option value="${type.puissance}">Tariff ${type.puissance}</option>`
+            ).join('');
+            
+            // 在下一个事件循环中设置初始值
+            setTimeout(() => {
+                const calcTariff = document.getElementById('calc-tariff');
+                const calcMois = document.getElementById('calc-mois');
+                if (calcTariff && calcMois && calcTariff.value) {
+                    const selectedType = customerTypes.find(type => type.puissance === calcTariff.value);
+                    if (selectedType) {
+                        calcMois.value = selectedType.nMois;
+                    }
+                }
+            }, 0);
+            
+            return options;
+        }
+
+        // 修改执行计算的函数
+        function performCalculation() {
+            const tariff = document.getElementById('calc-tariff').value;
+            const montant = parseFloat(document.getElementById('calc-montant').value);
+            const mois = parseInt(document.getElementById('calc-mois').value);
+
+            // 修改验证逻辑，允许 mois 为 0
+            if (!tariff || isNaN(montant) || isNaN(mois)) {
+                alert('请填写所有必填项');
+                return;
+            }
+
+            if (montant < 0 || mois < 0) {
+                alert('输入值不能为负数');
+                return;
+            }
+
+            // 获取选中的 tariff 对应的客户类型数据
+            const savedTypes = JSON.parse(localStorage.getItem('customerTypes'));
+            const selectedType = savedTypes.find(type => type.puissance === tariff);
+
+            if (!selectedType) {
+                alert('未找到对应的 Tariff 数据');
+                return;
+            }
+
+            // 将字符串转换为数字
+            const dc = parseFloat(selectedType.dc);
+            const rav = parseFloat(selectedType.rav);
+            const tm = parseFloat(selectedType.tm);
+            const prixUnitaire = parseFloat(selectedType.prixUnitaire);
+            const currentTotalMontant = parseFloat(selectedType.totalMontant) || 0;
+            const currentTotalKwh = parseFloat(selectedType.totalkWh) || 0;
+            const numbreAchat = parseInt(selectedType.numbreAchat) || 0;
+
+            // 计算 quantiteEnergie
+            let quantiteEnergie;
+            let calculationFormula;
+            
+            if (selectedType.tarifProgressif) {
+                const prixUnitaireSup = parseFloat(selectedType.prixUnitaireSup);
+                const deuxiemeDC = parseFloat(selectedType.deuxiemeDC);
+                const moisInitial = parseFloat(selectedType.moisInitial);
+                const reference = parseFloat(selectedType.reference);
+                
+                // 检查总金额是否超过 Reference
+                if ((currentTotalMontant + montant) >= reference) {
+                    // 使用新公式
+                    quantiteEnergie = (
+                        (currentTotalMontant + montant) - 
+                        (rav * moisInitial) - 
+                        (tm * (numbreAchat + 1)) - 
+                        (1.189 * deuxiemeDC) -
+                        (1.189 * dc * (moisInitial - 1))
+                    ) / (1.189 * prixUnitaireSup) - currentTotalKwh;
+                    
+                    calculationFormula = `quantiteEnergie = ((Total Montant + Montant) - RAV × Mois initial - TM × Numbre Achat - 1.189 × Deuxieme DC - 1.189 × DC × (Mois initial - 1)) / (1.189 × Prix Unitaire Supplementaire) - Total kWh`;
+                } else {
+                    // 使用原始公式
+                    quantiteEnergie = (montant - (rav * mois) - tm - (1.189 * dc * mois)) / (1.189 * prixUnitaire);
+                    calculationFormula = `quantiteEnergie = (Montantpay - RAV × mois - TM - 1.189 × DC × mois) / (1.189 × prixUnitaire)`;
+                }
+            } else {
+                // 非渐进式费率使用原始公式
+                quantiteEnergie = (montant - (rav * mois) - tm - (1.189 * dc * mois)) / (1.189 * prixUnitaire);
+                calculationFormula = `quantiteEnergie = (Montantpay - RAV × mois - TM - 1.189 × DC × mois) / (1.189 × prixUnitaire)`;
+            }
+
+            // 显示计算结果
+            const resultDiv = document.getElementById('calculation-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <h4>计算结果</h4>
+                <div class="result-content">
+                    <p><strong>选择的 Tariff:</strong> Tariff ${selectedType.puissance}</p>
+                    <p><strong>输入金额 (Montantpay):</strong> ${montant}</p>
+                    <p><strong>Numbre Achat:</strong> ${selectedType.numbreAchat || 0}</p>
+                    <p><strong>计算得到的 quantiteEnergie:</strong> ${quantiteEnergie.toFixed(2)}</p>
+                    <div class="calculation-details">
+                        <p><strong>计算过程:</strong></p>
+                        <p class="formula">${calculationFormula}</p>
+                        ${selectedType.tarifProgressif && (currentTotalMontant + montant) >= parseFloat(selectedType.reference) ? `
+                            <p class="formula">quantiteEnergie = ((${currentTotalMontant} + ${montant}) - ${rav} × ${selectedType.moisInitial} - ${tm} × ${numbreAchat + 1} - 1.189 × ${selectedType.deuxiemeDC} - 1.189 × ${dc} × (${selectedType.moisInitial} - 1)) / (1.189 × ${selectedType.prixUnitaireSup}) - ${currentTotalKwh}</p>
+                            <p class="formula">quantiteEnergie = ((${(currentTotalMontant + montant).toFixed(2)} - ${(rav * selectedType.moisInitial).toFixed(2)} - ${(tm * (numbreAchat + 1)).toFixed(2)} - ${(1.189 * selectedType.deuxiemeDC).toFixed(2)} - ${(1.189 * dc * (selectedType.moisInitial - 1)).toFixed(2)}) / ${(1.189 * selectedType.prixUnitaireSup).toFixed(2)} - ${currentTotalKwh}</p>
+                        ` : `
+                            <p class="formula">quantiteEnergie = (${montant} - ${rav} × ${mois} - ${tm} - 1.189 × ${dc} × ${mois}) / (1.189 × ${prixUnitaire})</p>
+                        `}
+                        <p class="formula">quantiteEnergie = ${quantiteEnergie.toFixed(2)}</p>
+                    </div>
+                    <p class="formula">
+                        <strong>验证计算公式:</strong><br>
+                        ${selectedType.tarifProgressif && (currentTotalMontant + montant) >= parseFloat(selectedType.reference) ? `
+                            Total Montant + Montant = 1.189 × ((${quantiteEnergie.toFixed(2)} + ${currentTotalKwh}) × ${selectedType.prixUnitaireSup}) + 1.189 × ${selectedType.deuxiemeDC} + 1.189 × ${dc} × (${selectedType.moisInitial} - 1) + ${rav} × ${selectedType.moisInitial} + ${tm} × ${numbreAchat + 1} = ${(currentTotalMontant + montant).toFixed(2)}
+                        ` : `
+                            Montantpay = 1.189 × (${quantiteEnergie.toFixed(2)} × ${prixUnitaire} + ${dc} × ${mois}) + ${rav} × ${mois} + ${tm} = ${montant}
+                        `}
+                    </p>
+                </div>
+            `;
+
+            // 更新统计数据
+            selectedType.totalMontant = (parseFloat(selectedType.totalMontant) || 0) + montant;
+            selectedType.totalkWh = (parseFloat(selectedType.totalkWh) || 0) + quantiteEnergie;
+            selectedType.numbreAchat = (parseInt(selectedType.numbreAchat) || 0) + 1;  // 增加购买次数
+            
+            // 计算完成后自动将 N Mois pas payer 设为 0
+            selectedType.nMois = "0";
+            
+            // 同步更新计算表单中的 N Mois sans achats
+            const calcMois = document.getElementById('calc-mois');
+            if (calcMois) {
+                calcMois.value = "0";
+            }
+            
+            // 保存更新后的数据
+            localStorage.setItem('customerTypes', JSON.stringify(savedTypes));
+
+            // 更新显示
+            const cards = document.querySelectorAll('.customer-type-card');
+            cards.forEach(card => {
+                const cardPuissance = card.querySelector('.card-header h4').textContent.replace('Tariff ', '');
+                if (cardPuissance === tariff) {
+                    updateCardContent(card, selectedType);
+                }
+            });
+        }
+
+        // 添加地图显示函数
+        function showMap() {
+            const content = document.querySelector('.content');
+            content.innerHTML = `
+                <div id="calculationSettings" class="calculation-settings">
+                    <div class="settings-header">
+                        <h3>地图视图</h3>
+                    </div>
+                    <div class="map-container">
+                        <div class="map-controls">
+                            <button onclick="centerOnCongo()">定位到刚果布</button>
+                            <button onclick="addMarker()">添加标记</button>
+                            <button class="import-btn" onclick="document.getElementById('fileInput').click()">
+                                <i class="fas fa-file-import"></i> 导入电表位置
+                            </button>
+                            <input type="file" id="fileInput" class="file-input" accept=".txt" onchange="importMeterLocations(event)">
+                            <button class="import-btn dcu-btn" onclick="document.getElementById('dcuFileInput').click()">
+                                <i class="fas fa-file-import"></i> DCU Import
+                            </button>
+                            <input type="file" id="dcuFileInput" class="file-input" accept=".txt" onchange="importDCULocations(event)">
+                            <button class="clear-btn meter-clear" onclick="clearDevices('meter')">
+                                <i class="fas fa-trash-alt"></i> 清除电表
+                            </button>
+                            <button class="clear-btn dcu-clear" onclick="clearDevices('dcu')">
+                                <i class="fas fa-trash-alt"></i> 清除DCU
+                            </button>
+                        </div>
+                        <div class="device-counter">
+                            <p class="meter-count">
+                                <i class="fas fa-tachometer-alt"></i>
+                                电表数量: <span id="meterCount">0</span>
+                            </p>
+                            <p class="dcu-count">
+                                <i class="fas fa-broadcast-tower"></i>
+                                DCU数量: <span id="dcuCount">0</span>
+                            </p>
+                        </div>
+                        <div id="map"></div>
+                    </div>
+                </div>
+            `;
+
+            // 初始化地图
+            const map = L.map('map').setView([-4.7885, 11.8635], 13); // 设置到黑角市中心
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            window.mapInstance = map;
+            window.metersLayer = L.layerGroup().addTo(map);
+            window.dcuLayer = L.layerGroup().addTo(map);
+
+            // 加载保存的数据
+            loadSavedLocations();
+        }
+
+        // 添加定位到刚果布的函数
+        function centerOnCongo() {
+            if (window.mapInstance) {
+                window.mapInstance.setView([-4.7885, 11.8635], 13); // 设置到黑角市中心
+            }
+        }
+
+        // 添加标记的函数
+        function addMarker() {
+            if (window.mapInstance) {
+                const marker = L.marker(window.mapInstance.getCenter()).addTo(window.mapInstance);
+                marker.bindPopup("<b>新标记</b><br>这是一个新添加的标记。").openPopup();
+            }
+        }
+
+        // 添加导入电表位置的函数
+        window.importMeterLocations = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // 创建进度显示元素
+            const progressDiv = document.createElement('div');
+            progressDiv.className = 'import-progress';
+            progressDiv.innerHTML = `
+                <span class="close-progress" onclick="this.parentElement.remove()">×</span>
+                <h4>导入进度</h4>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill"></div>
+                </div>
+                <div class="import-status">正在读取文件...</div>
+                <div class="import-error"></div>
+            `;
+            document.body.appendChild(progressDiv);
+
+            const progressBar = progressDiv.querySelector('.progress-bar-fill');
+            const statusDiv = progressDiv.querySelector('.import-status');
+            const errorDiv = progressDiv.querySelector('.import-error');
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    // 获取已存在的电表数据
+                    const existingMeters = JSON.parse(localStorage.getItem('meterLocations') || '[]');
+                    const existingMeterNos = new Set(existingMeters.map(m => m.meterNo));
+
+                    const lines = e.target.result.split('\n').filter(line => line.trim());
+                    const totalLines = lines.length;
+                    let successCount = 0;
+                    let skipCount = 0;
+                    let errorCount = 0;
+                    let errors = [];
+                    let failedMeters = []; // 添加回失败电表数组
+
+                    statusDiv.textContent = `开始处理 ${totalLines} 个电表位置...`;
+
+                    lines.forEach((line, index) => {
+                        const [meterNo, longitude, latitude] = line.trim().split(',');
+                        try {
+                            if (meterNo && longitude && latitude) {
+                                // 检查是否重复
+                                if (existingMeterNos.has(meterNo)) {
+                                    skipCount++;
+                                    return; // 跳过重复的电表
+                                }
+
+                                const lat = parseFloat(latitude);
+                                const lng = parseFloat(longitude);
+                                if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                                    throw new Error(`坐标无效`);
+                                }
+
+                                // 创建自定义图标
+                                const meterIcon = L.divIcon({
+                                    html: '<i class="fas fa-tachometer-alt" style="color: red;"></i>',
+                                    className: 'meter-icon',
+                                    iconSize: [20, 20]
+                                });
+
+                                // 添加标记
+                                const marker = L.marker([lat, lng], {
+                                    icon: meterIcon
+                                }).addTo(window.metersLayer);
+
+                                // 添加弹出信息
+                                marker.bindPopup(`
+                                    <div class="meter-popup">
+                                        <strong>电表号:</strong> ${meterNo}<br>
+                                        <strong>经度:</strong> ${longitude}<br>
+                                        <strong>纬度:</strong> ${latitude}
+                                    </div>
+                                `);
+                                successCount++;
+
+                                // 保存新电表位置
+                                existingMeters.push({
+                                    meterNo: meterNo,
+                                    lat: lat,
+                                    lng: lng
+                                });
+                                saveLocations('meter', existingMeters);
+                                existingMeterNos.add(meterNo);
+                            } else {
+                                throw new Error(`数据格式不正确`);
+                            }
+                        } catch (err) {
+                            errorCount++;
+                            errors.push(`第 ${index + 1} 行: ${err.message}`);
+                            // 记录失败的电表详细信息
+                            failedMeters.push({
+                                line: index + 1,
+                                meterNo: meterNo || '未知',
+                                error: err.message,
+                                rawData: line.trim()
+                            });
+                        }
+
+                        // 更新进度
+                        const progress = ((index + 1) / totalLines) * 100;
+                        progressBar.style.width = `${progress}%`;
+                        statusDiv.textContent = `处理中: ${index + 1}/${totalLines}`;
+                    });
+
+                    // 显示最终结果
+                    const resultHtml = `
+                        <div>导入完成: 
+                            <br>新增 ${successCount} 个
+                            ${skipCount > 0 ? `<br>跳过 ${skipCount} 个（重复）` : ''}
+                            ${errorCount > 0 ? `<br>失败 ${errorCount} 个` : ''}
+                            ${errorCount > 0 ? `
+                                <br><button onclick='window.showFailedMeters(${JSON.stringify(failedMeters)})' 
+                                        style="margin-top: 10px; padding: 5px 10px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                    查看失败详情
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                    statusDiv.innerHTML = resultHtml;
+
+                    // 修改自动关闭时间，当有错误时延长显示时间
+                    const closeTimeout = errorCount > 0 ? 5000 : 3000; // 有错误时显示5秒，否则显示3秒
+                    setTimeout(() => {
+                        if (progressDiv && progressDiv.parentNode) {
+                            progressDiv.remove();
+                        }
+                    }, closeTimeout);
+
+                } catch (err) {
+                    statusDiv.textContent = '导入失败';
+                    errorDiv.textContent = err.message;
+                }
+            };
+
+            reader.onerror = function() {
+                statusDiv.textContent = '文件读取失败';
+                errorDiv.textContent = '无法读取文件，请检查文件格式是否正确';
+            };
+
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // 添加显示失败电表详情的函数
+        window.showFailedMeters = function(failedMeters) {
+            // 移除可能存在的旧的详情窗口
+            const existingDetails = document.querySelector('.import-progress');
+            if (existingDetails) {
+                existingDetails.remove();
+            }
+        
+            const detailsDiv = document.createElement('div');
+            detailsDiv.className = 'import-progress';
+            detailsDiv.style.maxHeight = '80vh';
+            detailsDiv.style.overflowY = 'auto';
+            detailsDiv.style.width = '80%';  // 加宽详情窗口
+            
+            let tableContent = `
+                <span class="close-progress" onclick="this.parentElement.remove()">×</span>
+                <h4>导入失败的电表详情（共 ${failedMeters.length} 个）</h4>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <thead>
+                        <tr style="background: #f5f5f5;">
+                            <th style="padding: 8px; border: 1px solid #ddd;">行号</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">电表号</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">错误原因</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">原始数据</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            failedMeters.forEach(meter => {
+                tableContent += `
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${meter.line}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${meter.meterNo}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; color: #f44336;">${meter.error}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; font-family: monospace;">${meter.rawData}</td>
+                    </tr>
+                `;
+            });
+            
+            tableContent += `
+                    </tbody>
+                </table>
+                <div style="margin-top: 15px; text-align: right;">
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="padding: 8px 16px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        关闭
+                    </button>
+                </div>
+            `;
+            
+            detailsDiv.innerHTML = tableContent;
+            document.body.appendChild(detailsDiv);
+        };
+
+        // 修改 DCU 导入函数
+        window.importDCULocations = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // 创建进度显示元素
+            const progressDiv = document.createElement('div');
+            progressDiv.className = 'import-progress';
+            progressDiv.innerHTML = `
+                <span class="close-progress" onclick="this.parentElement.remove()">×</span>
+                <h4>DCU 导入进度</h4>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill"></div>
+                </div>
+                <div class="import-status">正在读取文件...</div>
+                <div class="import-error"></div>
+            `;
+            document.body.appendChild(progressDiv);
+        
+            const progressBar = progressDiv.querySelector('.progress-bar-fill');
+            const statusDiv = progressDiv.querySelector('.import-status');
+            const errorDiv = progressDiv.querySelector('.import-error');
+        
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    // 获取已存在的 DCU 数据
+                    const existingDCUs = JSON.parse(localStorage.getItem('dcuLocations') || '[]');
+                    const existingDCUNos = new Set(existingDCUs.map(d => d.dcuNo));
+
+                    const lines = e.target.result.split('\n').filter(line => line.trim());
+                    const totalLines = lines.length;
+                    let successCount = 0;
+                    let skipCount = 0;
+                    let errorCount = 0;
+                    let errors = [];
+                    let failedDCUs = []; // 添加回失败 DCU 数组
+
+                    statusDiv.textContent = `开始处理 ${totalLines} 个 DCU 位置...`;
+
+                    lines.forEach((line, index) => {
+                        const [dcuNo, longitude, latitude] = line.trim().split(',');
+                        try {
+                            if (dcuNo && longitude && latitude) {
+                                // 检查是否重复
+                                if (existingDCUNos.has(dcuNo)) {
+                                    skipCount++;
+                                    return; // 跳过重复的 DCU
+                                }
+
+                                const lat = parseFloat(latitude);
+                                const lng = parseFloat(longitude);
+                                if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                                    throw new Error(`坐标无效`);
+                                }
+
+                                // 创建蓝色 DCU 图标
+                                const dcuIcon = L.divIcon({
+                                    html: '<i class="fas fa-broadcast-tower" style="color: blue;"></i>',
+                                    className: 'dcu-icon',
+                                    iconSize: [20, 20]
+                                });
+        
+                                // 添加标记
+                                const marker = L.marker([lat, lng], {
+                                    icon: dcuIcon
+                                }).addTo(window.dcuLayer);
+        
+                                // 添加弹出信息
+                                marker.bindPopup(`
+                                    <div class="meter-popup">
+                                        <strong>DCU 编号:</strong> ${dcuNo}<br>
+                                        <strong>经度:</strong> ${longitude}<br>
+                                        <strong>纬度:</strong> ${latitude}
+                                    </div>
+                                `);
+                                successCount++;
+
+                                // 保存新 DCU 位置
+                                existingDCUs.push({
+                                    dcuNo: dcuNo,
+                                    lat: lat,
+                                    lng: lng
+                                });
+                                saveLocations('dcu', existingDCUs);
+                                existingDCUNos.add(dcuNo);
+
+                                // 添加 200 米覆盖圈
+                                L.circle([lat, lng], {
+                                    radius: 200, // 200米半径
+                                    color: '#2962FF',
+                                    fillColor: '#2962FF',
+                                    fillOpacity: 0.1,
+                                    weight: 1
+                                }).addTo(window.dcuLayer);
+                            } else {
+                                throw new Error(`数据格式不正确`);
+                            }
+                        } catch (err) {
+                            errorCount++;
+                            errors.push(`第 ${index + 1} 行: ${err.message}`);
+                            // 记录失败的 DCU 详细信息
+                            failedDCUs.push({
+                                line: index + 1,
+                                dcuNo: dcuNo || '未知',
+                                error: err.message,
+                                rawData: line.trim()
+                            });
+                        }
+
+                        // 更新进度
+                        const progress = ((index + 1) / totalLines) * 100;
+                        progressBar.style.width = `${progress}%`;
+                        statusDiv.textContent = `处理中: ${index + 1}/${totalLines}`;
+                    });
+
+                    // 显示最终结果
+                    const resultHtml = `
+                        <div>DCU 导入完成: 
+                            <br>新增 ${successCount} 个
+                            ${skipCount > 0 ? `<br>跳过 ${skipCount} 个（重复）` : ''}
+                            ${errorCount > 0 ? `<br>失败 ${errorCount} 个` : ''}
+                            ${errorCount > 0 ? `
+                                <br><button onclick='window.showFailedDCUs(${JSON.stringify(failedDCUs)})' 
+                                        style="margin-top: 10px; padding: 5px 10px; background: #2962FF; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                    查看失败详情
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                    statusDiv.innerHTML = resultHtml;
+
+                    // 修改自动关闭时间，当有错误时延长显示时间
+                    const closeTimeout = errorCount > 0 ? 5000 : 3000; // 有错误时显示5秒，否则显示3秒
+                    setTimeout(() => {
+                        if (progressDiv && progressDiv.parentNode) {
+                            progressDiv.remove();
+                        }
+                    }, closeTimeout);
+
+                } catch (err) {
+                    statusDiv.textContent = 'DCU 导入失败';
+                    errorDiv.textContent = err.message;
+                }
+            };
+
+            reader.onerror = function() {
+                statusDiv.textContent = '文件读取失败';
+                errorDiv.textContent = '无法读取文件，请检查文件格式是否正确';
+            };
+
+            reader.readAsText(file);
+            event.target.value = '';
+        };
+
+        // 添加显示失败 DCU 详情的函数
+        window.showFailedDCUs = function(failedDCUs) {
+            const detailsDiv = document.createElement('div');
+            detailsDiv.className = 'import-progress';
+            detailsDiv.style.maxHeight = '80vh';
+            detailsDiv.style.overflowY = 'auto';
+            detailsDiv.style.width = '80%';
+        
+            let tableContent = `
+                <span class="close-progress" onclick="this.parentElement.remove()">×</span>
+                <h4>导入失败的 DCU 详情（共 ${failedDCUs.length} 个）</h4>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <thead>
+                        <tr style="background: #f5f5f5;">
+                            <th style="padding: 8px; border: 1px solid #ddd;">行号</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">DCU 编号</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">错误原因</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">原始数据</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+        
+            failedDCUs.forEach(dcu => {
+                tableContent += `
+                    <tr>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${dcu.line}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${dcu.dcuNo}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; color: #2962FF;">${dcu.error}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; font-family: monospace;">${dcu.rawData}</td>
+                    </tr>
+                `;
+            });
+        
+            tableContent += `
+                    </tbody>
+                </table>
+                <div style="margin-top: 15px; text-align: right;">
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="padding: 8px 16px; background: #2962FF; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        关闭
+                    </button>
+                </div>
+            `;
+        
+            detailsDiv.innerHTML = tableContent;
+            document.body.appendChild(detailsDiv);
+        };
+
+        // 添加保存位置数据的函数
+        function saveLocations(type, locations) {
+            localStorage.setItem(`${type}Locations`, JSON.stringify(locations));
+            // 更新设备计数
+            updateDeviceCounts();
+        }
+
+        // 添加加载保存的位置数据的函数
+        function loadSavedLocations() {
+            // 加载电表位置
+            const savedMeters = localStorage.getItem('meterLocations');
+            if (savedMeters) {
+                const meters = JSON.parse(savedMeters);
+                meters.forEach(meter => {
+                    const meterIcon = L.divIcon({
+                        html: '<i class="fas fa-tachometer-alt" style="color: red;"></i>',
+                        className: 'meter-icon',
+                        iconSize: [20, 20]
+                    });
+                    
+                    const marker = L.marker([meter.lat, meter.lng], {
+                        icon: meterIcon
+                    }).addTo(window.metersLayer);
+                    
+                    marker.bindPopup(`
+                        <div class="meter-popup">
+                            <strong>电表号:</strong> ${meter.meterNo}<br>
+                            <strong>经度:</strong> ${meter.lng}<br>
+                            <strong>纬度:</strong> ${meter.lat}
+                        </div>
+                    `);
+                });
+            }
+            
+            // 加载 DCU 位置
+            const savedDCUs = localStorage.getItem('dcuLocations');
+            if (savedDCUs) {
+                const dcus = JSON.parse(savedDCUs);
+                dcus.forEach(dcu => {
+                    const dcuIcon = L.divIcon({
+                        html: '<i class="fas fa-broadcast-tower" style="color: blue;"></i>',
+                        className: 'dcu-icon',
+                        iconSize: [20, 20]
+                    });
+                    
+                    const marker = L.marker([dcu.lat, dcu.lng], {
+                        icon: dcuIcon
+                    }).addTo(window.dcuLayer);
+                    
+                    marker.bindPopup(`
+                        <div class="meter-popup">
+                            <strong>DCU 编号:</strong> ${dcu.dcuNo}<br>
+                            <strong>经度:</strong> ${dcu.lng}<br>
+                            <strong>纬度:</strong> ${dcu.lat}
+                        </div>
+                    `);
+
+                    // 添加 200 米覆盖圈
+                    L.circle([dcu.lat, dcu.lng], {
+                        radius: 200, // 200米半径
+                        color: '#2962FF',
+                        fillColor: '#2962FF',
+                        fillOpacity: 0.1,
+                        weight: 1
+                    }).addTo(window.dcuLayer);
+                });
+            }
+            
+            // 更新设备计数
+            updateDeviceCounts();
+        }
+
+        // 添加更新计数器的函数
+        function updateDeviceCounts() {
+            const meterCount = document.getElementById('meterCount');
+            const dcuCount = document.getElementById('dcuCount');
+            
+            // 获取保存的设备数据
+            const savedMeters = JSON.parse(localStorage.getItem('meterLocations') || '[]');
+            const savedDCUs = JSON.parse(localStorage.getItem('dcuLocations') || '[]');
+            
+            // 更新显示
+            if (meterCount) meterCount.textContent = savedMeters.length;
+            if (dcuCount) dcuCount.textContent = savedDCUs.length;
+        }
+
+        // 添加清除设备的函数
+        window.clearDevices = function(type) {
+            // 创建确认对话框
+            const confirmDiv = document.createElement('div');
+            confirmDiv.className = 'import-progress';
+            confirmDiv.style.width = 'auto';
+            confirmDiv.style.minWidth = '300px';
+            
+            confirmDiv.innerHTML = `
+                <h4>确认清除</h4>
+                <p>确定要清除所有${type === 'meter' ? '电表' : 'DCU'}吗？此操作不可撤销。</p>
+                <div style="margin-top: 20px; text-align: right;">
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="margin-right: 10px; padding: 8px 16px; background: #9e9e9e; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        取消
+                    </button>
+                    <button onclick="confirmClear('${type}')" 
+                            style="padding: 8px 16px; background: ${type === 'meter' ? '#d32f2f' : '#1565C0'}; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        确认清除
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(confirmDiv);
+        };
+        
+        // 添加确认清除的函数
+        window.confirmClear = function(type) {
+            if (type === 'meter') {
+                // 清除电表数据
+                localStorage.removeItem('meterLocations');
+                if (window.metersLayer) {
+                    window.metersLayer.clearLayers();
+                }
+            } else if (type === 'dcu') {
+                // 清除 DCU 数据
+                localStorage.removeItem('dcuLocations');
+                if (window.dcuLayer) {
+                    window.dcuLayer.clearLayers();
+                }
+            }
+        
+            // 更新设备计数
+            updateDeviceCounts();
+        
+            // 关闭确认对话框
+            const confirmDiv = document.querySelector('.import-progress');
+            if (confirmDiv) {
+                confirmDiv.remove();
+            }
+        
+            // 显示清除成功提示
+            const successDiv = document.createElement('div');
+            successDiv.className = 'import-progress';
+            successDiv.style.width = 'auto';
+            successDiv.style.minWidth = '300px';
+            
+            successDiv.innerHTML = `
+                <h4>清除成功</h4>
+                <p>已清除所有${type === 'meter' ? '电表' : 'DCU'}。</p>
+            `;
+            
+            document.body.appendChild(successDiv);
+        
+            // 3秒后自动关闭提示
+            setTimeout(() => {
+                if (successDiv && successDiv.parentNode) {
+                    successDiv.remove();
+                }
+            }, 3000);
+        };
     });
     </script>
 </body>
